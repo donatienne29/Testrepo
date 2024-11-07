@@ -1,15 +1,19 @@
 pipeline {
     agent any
 
+    tools {
+        git 'Default'
+    }
+
     environment {
-        DOCKER_IMAGE = 'flask-app'                // Nom de l'image Docker
-        CONTAINER_NAME = 'flask-app-container'    // Nom du conteneur Docker
+        DOCKER_IMAGE = 'flask-app'                /* Nom de l'image Docker */
+        CONTAINER_NAME = 'flask-app-container'    /* Nom du conteneur Docker */
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                git branch : 'main', url: 'https://github.com/donatienne29/Testrepo.git', credentialsId: 'token-credentials-for-jenkins'
+                git branch: 'main', url: 'https://github.com/donatienne29/Testrepo.git', credentialsId: 'token-credentials-for-jenkins'
             }
         }
 
@@ -17,7 +21,7 @@ pipeline {
             steps {
                 sh 'docker --version'
                 script {
-                    docker.build("${DOCKER_IMAGE}")
+                    docker.build(DOCKER_IMAGE)
                 }
             }
         }
