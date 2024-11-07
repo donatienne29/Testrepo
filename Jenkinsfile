@@ -15,7 +15,9 @@ pipeline {
 
         stage('Build and Test') {
             steps {
-                echo 'Build and test steps (if any) go here'
+                // Installer le validateur HTML et vérifier le fichier HTML
+                sh 'npm install -g htmlhint'        // Installer htmlhint
+                sh "htmlhint ${HTML_FILE}"          // Valider le fichier HTML
             }
         }
 
