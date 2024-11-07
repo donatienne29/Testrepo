@@ -13,4 +13,4 @@ COPY . .
 EXPOSE 5000
 
 # Démarrer l'application
-CMD ["python", "app.py"]
+CMD ["python3", "app.py"]
