@@ -59,7 +59,7 @@ pipeline {
             echo 'Pipeline failed.'
             // Envoi de l'email en cas d'échec
             emailext (
-                to: 'sylvies706@gmail.com',
+                to: 'maminiainasylvie@gmail.com',
                 subject: "Jenkins Build Failure: ${JOB_NAME} ${BUILD_NUMBER}",
                 body: "The build has failed for ${JOB_NAME} #${BUILD_NUMBER}.\n\nPlease check the Jenkins console output for more details.\n\nLink: ${BUILD_URL}",
                 mimeType: 'text/html'
