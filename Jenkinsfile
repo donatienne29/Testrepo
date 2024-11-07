@@ -15,17 +15,36 @@ pipeline {
 
         stage('Build and Test') {
             steps {
-                // Si tu as des étapes de build ou de test, tu peux les ajouter ici
                 echo 'Build and test steps (if any) go here'
             }
         }
 
-        stage('Deploy to Apache') {
+        stage('Approval for Deployment') {
             steps {
                 script {
-                    // Copier le fichier HTML vers le répertoire d'Apache
+                    def userInput = input(
+                        message: 'Souhaitez-vous déployer l\'application sur le serveur Apache ?',
+                        parameters: [
+                            choice(name: 'DEPLOY', choices: ['Oui', 'Non'], description: 'Sélectionnez Oui pour déployer ou Non pour annuler')
+                        ]
+                    )
+                    if (userInput == 'Non') {
+                        echo 'Déploiement annulé par l\'utilisateur.'
+                        currentBuild.result = 'ABORTED'
+                        return
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Apache') {
+            when {
+                expression { currentBuild.result != 'ABORTED' }
+            }
+            steps {
+                script {
                     sh "sudo cp ${HTML_FILE} ${APACHE_HTML_DIR}/"
-                    sh "sudo systemctl restart httpd"  // Redémarrer Apache pour appliquer les changements
+                    sh "sudo systemctl restart httpd"  // Redémarrer Apache
                 }
             }
         }
