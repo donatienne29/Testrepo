@@ -1,13 +1,9 @@
 pipeline {
     agent any
 
-    tools {
-        git 'Default'
-    }
-
     environment {
-        DOCKER_IMAGE = 'flask-app'                /* Nom de l'image Docker */
-        CONTAINER_NAME = 'flask-app-container'    /* Nom du conteneur Docker */
+        APACHE_HTML_DIR = '/var/www/html'       // Répertoire HTML Apache
+        HTML_FILE = 'index.html'                 // Nom du fichier HTML à déployer
     }
 
     stages {
@@ -17,34 +13,19 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Build and Test') {
             steps {
-                sh 'docker --version'
-                script {
-                    docker.build(DOCKER_IMAGE)
-                }
+                // Si tu as des étapes de build ou de test, tu peux les ajouter ici
+                echo 'Build and test steps (if any) go here'
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                // Exécuter les tests dans le conteneur
-                sh '''
-                docker run --rm ${DOCKER_IMAGE} pytest tests/ > test_results.txt
-                cat test_results.txt
-                '''
-            }
-        }
-
-        stage('Deploy to Docker') {
+        stage('Deploy to Apache') {
             steps {
                 script {
-                    // Arrêter et supprimer le conteneur en cours d'exécution, le cas échéant
-                    sh "docker stop ${CONTAINER_NAME} || true"
-                    sh "docker rm ${CONTAINER_NAME} || true"
-
-                    // Démarrer un nouveau conteneur pour déployer l'application
-                    sh "docker run -d --name ${CONTAINER_NAME} -p 5000:5000 ${DOCKER_IMAGE}"
+                    // Copier le fichier HTML vers le répertoire d'Apache
+                    sh "sudo cp ${HTML_FILE} ${APACHE_HTML_DIR}/"
+                    sh "sudo systemctl restart httpd"  // Redémarrer Apache pour appliquer les changements
                 }
             }
         }
