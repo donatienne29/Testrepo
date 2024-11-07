@@ -30,7 +30,7 @@ pipeline {
                     )
                     if (userInput == 'Non') {
                         echo 'Déploiement annulé par l\'utilisateur.'
-                        currentBuild.result = 'ABORTED'
+                        currentBuild.result = 'SUCCESS'  // Laisse le pipeline en succès même si le déploiement est annulé
                         return
                     }
                 }
@@ -39,7 +39,7 @@ pipeline {
 
         stage('Deploy to Apache') {
             when {
-                expression { currentBuild.result != 'ABORTED' }
+                expression { currentBuild.result == 'SUCCESS' }
             }
             steps {
                 script {
