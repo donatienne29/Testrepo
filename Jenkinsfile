@@ -20,9 +20,6 @@ pipeline {
         }
 
         stage('Deploy to Apache') {
-            when {
-                expression { currentBuild.result == 'SUCCESS' }
-            }
             steps {
                 script {
                     sh "sudo cp ${HTML_FILE} ${APACHE_HTML_DIR}/"
