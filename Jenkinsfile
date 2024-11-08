@@ -19,24 +19,6 @@ pipeline {
             }
         }
 
-        stage('Approval for Deployment') {
-            steps {
-                script {
-                    def userInput = input(
-                        message: 'Souhaitez-vous déployer l\'application sur le serveur Apache ?',
-                        parameters: [
-                            choice(name: 'DEPLOY', choices: ['Oui', 'Non'], description: 'Sélectionnez Oui pour déployer ou Non pour annuler')
-                        ]
-                    )
-                    if (userInput == 'Non') {
-                        echo 'Déploiement annulé par l\'utilisateur.'
-                        currentBuild.result = 'SUCCESS'  // Laisse le pipeline en succès même si le déploiement est annulé
-                        return
-                    }
-                }
-            }
-        }
-
         stage('Deploy to Apache') {
             when {
                 expression { currentBuild.result == 'SUCCESS' }
@@ -57,13 +39,6 @@ pipeline {
         
         failure {
             echo 'Pipeline failed.'
-            // Envoi de l'email en cas d'échec
-            emailext (
-                to: 'maminiainasylvie@gmail.com',
-                subject: "Jenkins Build Failure: ${JOB_NAME} ${BUILD_NUMBER}",
-                body: "The build has failed for ${JOB_NAME} #${BUILD_NUMBER}.\n\nPlease check the Jenkins console output for more details.\n\nLink: ${BUILD_URL}",
-                mimeType: 'text/html'
-            )
         }
     }
 }
