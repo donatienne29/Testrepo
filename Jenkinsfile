@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        APACHE_HTML_DIR = '/var/www/html'       // Répertoire HTML Apache
-        HTML_FILE = 'index.html'                 // Nom du fichier HTML à déployer
+        APACHE_HTML_DIR = '/var/www/html'       
+        HTML_FILE = 'index.html'                 
     }
 
     stages {
@@ -15,7 +15,7 @@ pipeline {
 
         stage('Build and Test') {
             steps {
-                sh "htmlhint ${HTML_FILE}"          // Valider le fichier HTML
+                sh "htmlhint ${HTML_FILE}"         
             }
         }
 
@@ -23,7 +23,7 @@ pipeline {
             steps {
                 script {
                     sh "sudo cp ${HTML_FILE} ${APACHE_HTML_DIR}/"
-                    sh "sudo systemctl restart httpd"  // Redémarrer Apache
+                    sh "sudo systemctl restart httpd"  
                 }
             }
         }
@@ -35,12 +35,7 @@ pipeline {
         }
         
         failure {
-             emailext (
-                subject: "Build FAILED: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
-                body: "The build failed. Check Jenkins for more details.",
-                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-                to: "sylvies706@gmail.com"
-            )
+           echo 'Pipeline failed.'
         }
     }
 }
